@@ -1,0 +1,14 @@
+{
+  "name": "sb3_blocks",
+  "version": "0.1.0",
+  "description": "Manipulate SB3 Files",
+  "main": "index.js",
+  "repository": "https://github.com/ajzat34/sb3.git",
+  "author": "Andrew Johnson <ajzat25@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "jszip": "^3.5.0",
+    "yargs": "^16.1.0"
+  }
+}
