@@ -6,7 +6,7 @@ class Branch extends Array {
   /**
   * @constructor
   */
-  constructor() {
+  constructor(target) {
     super();
   }
 

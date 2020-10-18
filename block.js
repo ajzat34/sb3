@@ -1,3 +1,5 @@
+const common = require('./common.js');
+
 /**
 * Represents a block
 */
@@ -11,6 +13,7 @@ class Block {
   */
   constructor(opcode, fields, inputs, mutation) {
     this.opcode = opcode;
+    this.uuid = common.uuid();
     this.fields = fields;
     this.inputs = inputs;
     this.mutation = mutation;
