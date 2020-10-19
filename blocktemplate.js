@@ -25,7 +25,7 @@ function checkadd(target, source, list) {
 function shiftInto(target, values, list) {
   if (!Array.isArray(list)) throw new Error(`argument for list must be array`);
   for (key of list) {
-    const next = target.shift();
+    const next = values.shift();
     if (!next) throw new Error(`ran out of values at ${key}`)
     target[key] = next;
   }
@@ -43,7 +43,7 @@ class BlockTemplate {
   * @param {object} mutation
   * @param {Array | undefined} flags
   */
-  constructor(opcode, fields, inputs, mutation, flags = []) {
+  constructor(opcode, fields=[], inputs=[], mutation=[], flags=[]) {
     this.opcode = opcode;
     if (opcode.indexOf('_') > 0) {
       this.category = opcode.substr(0, opcode.indexOf('_'));

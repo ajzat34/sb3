@@ -35,6 +35,7 @@ class Meta {
 
 /**
 * A variable or list base
+* Note: 'name' is stored as 'value' to be more compatable with original scratch code
 */
 class Symbol {
   /**
@@ -43,18 +44,19 @@ class Symbol {
   */
   constructor(name) {
     this.id = common.uuid();
-    this.name = name;
+    this.value = name;
   }
 }
 
+// serialize methods are for sprite.variables && sprite.lists NOT blocks
 class Variable extends Symbol {
   serialize() {
-    return [this.name, ''];
+    return [this.value, ''];
   }
 }
 class List extends Symbol {
   serialize() {
-    return [this.name, []];
+    return [this.value, []];
   }
 }
 
@@ -121,6 +123,7 @@ class Target {
     this.name = name;
     this.isStage = isStage;
     this.symbols = [];
+    this.branches = [];
   }
 
   /**
@@ -129,6 +132,58 @@ class Target {
   */
   define(symbol) {
     this.symbols.push(symbol);
+  }
+
+  getContext() {
+    const branch = new Branch(Sb3);
+    this.branches.push(branch);
+    return branch;
+  }
+
+  serialize() {
+    const variables = Object.create(null);
+    const lists = Object.create(null);
+    const broadcasts = Object.create(null);
+    const comments = Object.create(null);
+    const costumes = [];
+    const sounds = [];
+    const blocks = {};
+
+    this.branches.forEach((branch) => {
+      branch.link();
+      branch.serialize(blocks);
+    });
+
+    for (const symbol of this.symbols) {
+      if (symbol instanceof Variable) variables[symbol.id] = symbol.serialize();
+      if (symbol instanceof List) lists[symbol.id] = symbol.serialize();
+      if (symbol instanceof Costume) costumes.push(symbol.serialize());
+      if (symbol instanceof Sound) costumes.push(symbol.serialize());
+      else throw new common.Error(`symbol: ${symbol} is not Variable List Costume or Sound`);
+    }
+
+    return {
+      isStage: this.isStage,
+      name: this.isStage? 'stage':this.name,
+      variables,
+      lists,
+      broadcasts,
+      blocks,
+      comments,
+      currentCostume: 0,
+      costumes,
+      sounds,
+      volume: 100,
+      layerOrder: 1,
+      visable: true,
+      x: 0,
+      y: 0,
+      size: 100,
+      direction: 90,
+      draggable: false,
+      rotationStyle: 'all around',
+
+    }
   }
 }
 
@@ -166,16 +221,16 @@ class Sb3 {
     this.meta = new Meta();
     this.extentions = ['pen', 'music'];
     this.targets = [];
-    this.sprite = new Sprite('MAIN');
+    this.sprite = new Sprite('Main');
     this.stage = new Stage('Stage');
-    this.targets.push(this.sprites);
+    this.targets.push(this.sprite);
     this.targets.push(this.stage);
     this.main = new Branch(this.sprite.blocks);
   }
 
   serialize() {
     const obj = {
-      targets: this.targets.map(((target)=>{return target.serialize()})),
+      targets: this.targets.map(target=>target.serialize()),
       monitors: [],
       extentions: this.extentions,
       meta: this.meta.toJSON(),

@@ -21,6 +21,13 @@ class Block {
     this.child = null;
     this.parent = null;
     this.next = null;
+    this.topLevel = false;
+  }
+
+  makeTopLevel() {
+    this.topLevel = true;
+    this.x = 0;
+    this.y = 0;
   }
 
   /**
