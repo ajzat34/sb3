@@ -35,5 +35,6 @@
   "data_itemoflist",
   "data_itemnumoflist",
   "data_listcontainsitem",
-  "music_getTempo"
+  "music_getTempo",
+  "procedures_prototype"
 ]

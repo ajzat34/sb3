@@ -1,6 +1,7 @@
 const primitive = require('./primitive.js');
 const blocks = require('./blocks.js');
 const serializeBlock = require('./serialize_blocks.js')
+const Procedure = require('./procedure.js')
 
 var y = 0;
 
@@ -20,6 +21,7 @@ class Branch extends Array {
     this.totalBlocks = 0;
     this.topLevel = true;
     this.build_children = [];
+    this.blocks = blocks;
   }
 
   /**
@@ -85,7 +87,7 @@ class Branch extends Array {
   }
 
   /**
-  * @param {function|undefined} callback
+  * @param {function(Branch)|undefined} callback
   * @return {Branch}
   */
   branch(callback) {
@@ -93,6 +95,26 @@ class Branch extends Array {
     this.build_children.push(branch);
     if (callback) callback(branch);
     return branch;
+  }
+
+  /**
+  * @param {string} proccode
+  * @param {bool} warp "run without screen refresh"
+  * @param {function(Branch)|undefined} callback
+  * @return {Procedure}
+  */
+  procedure(proccode, warp, callback) {
+    const proc = new Procedure(proccode, this.branch(), warp)
+    if (callback) callback(proc.branch);
+    return proc;
+  }
+
+  /**
+  * Call a procedure
+  * @param {Procedure} procedure
+  */
+  callProcedure(procedure) {
+    procedure.createCallBlock(this);
   }
 
   substack() {
@@ -115,9 +137,11 @@ class Branch extends Array {
     if (!this.length) return;
     const self = this;
     self.forEach((block, i) => {
-      if (block.child) block.child.parent = block;
       if (block !== self.last())  block.next = self[i+1];
       if (block !== self.first()) block.parent = self[i-1];
+      Object.values(block.inputs).forEach((input, i) => {
+        if (input instanceof this.Sb3.Block) input.parent = block;
+      });
     });
   }
 

@@ -29,14 +29,6 @@ class Block {
     this.x = 0;
     this.y = 0;
   }
-
-  /**
-  * Specify a "next" for block linking
-  * @param {Block} block
-  */
-  setChild(block) {
-    this.child = block;
-  }
 }
 
 module.exports = Block;

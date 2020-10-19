@@ -85,7 +85,7 @@ function serialize(block) {
     obj.topLevel = false;
   }
 
-  if (block.mutation.length) obj.mutation = block.mutation;
+  if (block.template.mutation.length) obj.mutation = block.mutation;
   if (block.comment) obj.comment = block.comment;
   return obj;
 }

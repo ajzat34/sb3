@@ -279,7 +279,14 @@ class Sb3 {
   export(filepath) {
     const self = this;
     return new Promise(function(resolve, reject) {
-      self.package().generateNodeStream({type:'nodebuffer',streamFiles:true})
+      self.package().generateNodeStream({
+        type:'nodebuffer',
+        streamFiles: true,
+        compression: "DEFLATE",
+        compressionOptions: {
+          level: 1,
+        }
+      })
       .pipe(fs.createWriteStream(path.resolve(process.cwd(), filepath)))
       .on('finish', function () {
           resolve()
