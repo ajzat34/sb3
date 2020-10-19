@@ -1,4 +1,4 @@
-const sb3 = require('./index.js');
+const sb3 = require('./sb3.js');
 const path = require('path');
 const inquirer = require('inquirer');
 

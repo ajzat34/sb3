@@ -4,7 +4,7 @@ class Sb3Error extends Error {
   * @param {string | number} code
   */
   constructor(message, code) {
-    super('Sb3: ' + message);
+    super(message);
     this.code = code;
     this.raw_message = message;
   }

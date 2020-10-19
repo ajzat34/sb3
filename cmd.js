@@ -1,6 +1,8 @@
 const yargs = require('yargs');
 yargs
 .command(require('./inspect.js'))
+.command(require('./genblocks.js'))
+.command(require('./blocktool.js'))
 .strict()
 .demandCommand()
 .help()

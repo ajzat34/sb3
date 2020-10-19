@@ -6,13 +6,14 @@ const common = require('./common.js');
 class Block {
   /**
   * @constructor
-  * @param {string} opcode    the block opcode
-  * @param {object} fields    associate name with value
+  * @param {BlockTemplate} template    the block template
+  * @param {object} fields    associate field name with value
   * @param {object} inputs    ^
   * @param {object} mutation  ^
   */
-  constructor(opcode, fields, inputs, mutation) {
-    this.opcode = opcode;
+  constructor(template, fields, inputs, mutation) {
+    this.template = template;
+    this.opcode = template.opcode;
     this.uuid = common.uuid();
     this.fields = fields;
     this.inputs = inputs;

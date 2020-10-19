@@ -3,6 +3,10 @@ const crypto = require('crypto')
 const common = require('./common.js');
 const Branch = require('./branch.js');
 const Block = require('./block.js');
+const BlockTemplate = require('./blocktemplate.js');
+const BlockLibrary = require('./blocklibrary.js');
+const blocks = require('./blocks');
+const file = require('./file.js');
 
 /**
 * meta property of object
@@ -14,7 +18,7 @@ class Meta {
   * @param {string} vm
   * @param {string} agent
   */
-  constructor(semver='3.0.0', vm='0.2.0', agent='sb3.js Mozilla') {
+  constructor(semver='3.0.0', vm='0.2.0', agent='sb3.js') {
     this.semver = semver
     this.vm = vm;
     this.agent = agent;
@@ -39,7 +43,7 @@ class Symbol {
   */
   constructor(name) {
     this.id = common.uuid();
-    this.name = name,
+    this.name = name;
   }
 }
 
@@ -179,3 +183,32 @@ class Sb3 {
     return obj;
   }
 }
+
+/**
+* return the 1st sprite from the project.json
+* @param {object} project
+* @return {object}
+*/
+Sb3.locateSprite = function(project) {
+  const targets = project.targets;
+  for (target of targets) {
+    if (!target.isStage) return target;
+  }
+  return null;
+}
+
+Sb3.Meta = Meta;
+Sb3.Stage = Stage;
+Sb3.Sprite = Sprite;
+Sb3.Costume = Costume;
+Sb3.Sound = Sound;
+Sb3.Variable = Variable;
+Sb3.List = List;
+Sb3.Block = Block;
+Sb3.Branch = Branch;
+Sb3.BlockTemplate = BlockTemplate;
+Sb3.BlockLibrary = BlockLibrary;
+Sb3.file = file;
+Sb3.blocks = blocks;
+
+module.exports = Sb3;

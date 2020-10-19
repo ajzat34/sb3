@@ -1,0 +1,10 @@
+[
+  "operator_gt",
+  "operator_lt",
+  "operator_equals",
+  "operator_and",
+  "operator_or",
+  "operator_not",
+  "data_listcontainsitem",
+  "sensing_mousedown"
+]
