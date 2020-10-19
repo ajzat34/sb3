@@ -47,7 +47,7 @@ class Symbol {
   */
   constructor(name) {
     this.id = common.uuid();
-    this.value = name;
+    this.value = name || common.uuid();
   }
 }
 
@@ -131,7 +131,7 @@ class Target {
     this.name = name;
     this.isStage = isStage;
     this.symbols = [];
-    this.branches = [];
+    this.blocks = new Branch(Sb3, this);
     this.assets = [];
     this.asset(
       path.resolve(__dirname, 'default.png'),
@@ -159,12 +159,6 @@ class Target {
     this.assets.push(asset);
   }
 
-  getContext() {
-    const branch = new Branch(Sb3);
-    this.branches.push(branch);
-    return branch;
-  }
-
   serialize() {
     const variables = Object.create(null);
     const lists = Object.create(null);
@@ -174,10 +168,8 @@ class Target {
     const sounds = [];
     const blocks = {};
 
-    this.branches.forEach((branch) => {
-      branch.link();
-      branch.serialize(blocks);
-    });
+    this.blocks.link();
+    this.blocks.serialize(blocks);
 
     for (const blockID in blocks) {
       const serializedBlock = blocks[blockID];

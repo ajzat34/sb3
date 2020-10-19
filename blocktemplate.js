@@ -1,6 +1,7 @@
 const Block = require('./block.js');
 const reporters = require('./reporters.json');
 const bools = require('./bools.json');
+const common = require('./common.js');
 
 /**
 * Copy all items by key in list from source to target
@@ -26,7 +27,11 @@ function shiftInto(target, values, list) {
   if (!Array.isArray(list)) throw new Error(`argument for list must be array`);
   for (key of list) {
     const next = values.shift();
-    if (!next) throw new Error(`ran out of values at ${key}`)
+    if (!next) {
+      const err = new Error(`ran out of values at ${key}`);
+      err.key = key;
+      throw err;
+    }
     target[key] = next;
   }
 }
@@ -68,8 +73,15 @@ class BlockTemplate {
   */
   createArgs(...args) {
     const all = Object.create(null);
-    shiftInto(all, args, this.args);
-    if (args.length) throw new Error(`Too many arguments for ${this.opcode}`);
+    args.forEach((arg, i) => {
+      if (arg === undefined) throw new common.Error(`Argument for ${this.args[i]} in ${this.opcode} is undefined`);
+    });
+    try {
+      shiftInto(all, args, this.args);
+    } catch (err) {
+      throw new common.Error(`Ran out of arguments for ${this.opcode} at ${err.key}`);
+    }
+    if (args.length) throw new common.Error(`Too many arguments for ${this.opcode}`);
     return all;
   }
 

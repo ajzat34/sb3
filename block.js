@@ -14,7 +14,7 @@ class Block {
   constructor(template, fields, inputs, mutation) {
     this.template = template;
     this.opcode = template.opcode;
-    this.uuid = common.uuid();
+    this.id = common.uuid();
     this.fields = fields;
     this.inputs = inputs;
     this.mutation = mutation;

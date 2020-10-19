@@ -2,6 +2,8 @@ const primitive = require('./primitive.js');
 const blocks = require('./blocks.js');
 const serializeBlock = require('./serialize_blocks.js')
 
+var y = 0;
+
 /**
 * A single execution branch
 * @extends Array
@@ -11,9 +13,13 @@ class Branch extends Array {
   * @constructor
   * @param {object} Sb3
   */
-  constructor(Sb3) {
+  constructor(Sb3, target) {
     super();
     this.Sb3 = Sb3
+    this.target = target;
+    this.totalBlocks = 0;
+    this.topLevel = true;
+    this.build_children = [];
   }
 
   /**
@@ -32,14 +38,34 @@ class Branch extends Array {
     return this[this.length - 1];
   }
 
+  /**
+  * See Sb3.Target.define
+  */
+  define(symbol) {
+    this.target.define(symbol);
+  }
+
+  /**
+  * create a block
+  * @param {string} name the opcode, or category.name of the block
+  * @param {...*} args the arguments to the block
+  * @return {object}
+  */
   block(name, ...args) {
+    const self = this;
+    this.totalBlocks++;
     args.forEach((arg, i) => {
       if (typeof arg === 'string'
           || typeof arg === 'number'
-          || arg instanceof this.Sb3.Variable
-          || arg instanceof this.Sb3.List
+          || arg instanceof self.Sb3.Variable
+          || arg instanceof self.Sb3.List
         )
-        {args[i] = primitive(arg);}
+        {args[i] = self.primitive(arg);}
+      else if (arg instanceof Branch) {
+        if (!arg.length) throw new Error(`Cannot pass empty branch as argument, ${arg.totalBlocks} where defined, but none are chained`);
+        arg.substack();
+        args[i] = arg.first();
+      }
     });
     const block = blocks.get(name).instance(...args);
     if (block.template.flags.includes('reporter')
@@ -51,10 +77,42 @@ class Branch extends Array {
   }
 
   /**
+  * Create a primitive block
+  * @param {string|number|Variable|List} data
+  */
+  primitive(data) {
+    return primitive(this.Sb3, data);
+  }
+
+  /**
+  * @param {function|undefined} callback
+  * @return {Branch}
+  */
+  branch(callback) {
+    const branch = new Branch(this.Sb3, this.target);
+    this.build_children.push(branch);
+    if (callback) callback(branch);
+    return branch;
+  }
+
+  substack() {
+    this.topLevel = false;
+    return this;
+  }
+
+  /**
   * update the next and parent attributes
   */
   link() {
-    this.first().makeTopLevel();
+    if (this.topLevel && this.length) {
+      this.first().makeTopLevel();
+      this.first().y = y;
+      y += 100;
+    }
+    this.build_children.forEach((child, i) => {
+      child.link();
+    });
+    if (!this.length) return;
     const self = this;
     self.forEach((block, i) => {
       if (block.child) block.child.parent = block;
@@ -66,6 +124,9 @@ class Branch extends Array {
   serialize(target) {
     if (this.first())
     serializeBlock.serializeAllChildren(this.first(), target);
+    this.build_children.forEach((child, i) => {
+      child.serialize(target);
+    });
   }
 }
 

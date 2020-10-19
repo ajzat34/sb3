@@ -6,7 +6,6 @@ class Sb3Error extends Error {
   constructor(message, code) {
     super(message);
     this.code = code;
-    this.raw_message = message;
   }
 }
 

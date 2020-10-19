@@ -1,7 +1,6 @@
 const Block = require('./block.js');
 const BlockTemplate = require('./blocktemplate.js');
 const common = require('./common.js');
-const Sb3 = require('./sb3.js')
 
 // lots of code from LLK/scratch-vm /src/serialization/sb3.js
 
@@ -97,18 +96,19 @@ function numberPrimitive(data) {
   return primitiveBlockTemplates['math_number'].instance({value: data});
 }
 function variablePrimitive(data) {
-  return primitiveBlockTemplates['data_variable'].instance({value: data});
+  return primitiveBlockTemplates['data_variable'].instance(data);
 }
 function listPrimitive(data) {
-  return primitiveBlockTemplates['data_listcontents'].instance({value: data});
+  return primitiveBlockTemplates['data_listcontents'].instance(data);
 }
 
 /**
 * automaticly create a primitive
+* @param {Object} Sb3
 * @param {string|number|Sb3.Variable|Sb3.List} data
 * @return {Block}
 */
-function primitive(data) {
+function primitive(Sb3, data) {
   if (typeof data === 'string') return stringPrimitive(data);
   if (typeof data === 'number') return numberPrimitive(data);
   if (data instanceof Sb3.Variable) return variablePrimitive(data);
