@@ -80,7 +80,7 @@ function serialize(block) {
     obj.topLevel = false;
   }
 
-  if (block.mutation) obj.mutation = block.mutation;
+  if (block.mutation.length) obj.mutation = block.mutation;
   if (block.comment) obj.comment = block.comment;
   return obj;
 }

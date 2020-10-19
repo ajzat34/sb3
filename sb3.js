@@ -1,5 +1,6 @@
 const path = require('path');
 const crypto = require('crypto')
+const JSZip = require('jszip');
 const common = require('./common.js');
 const Branch = require('./branch.js');
 const Block = require('./block.js');
@@ -7,6 +8,8 @@ const BlockTemplate = require('./blocktemplate.js');
 const BlockLibrary = require('./blocklibrary.js');
 const blocks = require('./blocks');
 const file = require('./file.js');
+const fs = require('fs');
+const compress = require('./compress.js');
 
 /**
 * meta property of object
@@ -68,9 +71,9 @@ class Asset {
     this.name = name;
     this.file = filedata;
     const hash = crypto.createHash('md5');
-    hash.update(file);
+    hash.update(file.toString());
     this.md5 = hash.digest('hex');
-    this.format = path.extname(filename);
+    this.format = path.extname(filename).replace('.','');
     this.filename = this.md5 + '.' + this.format;
   }
 
@@ -87,9 +90,9 @@ class Asset {
 class Costume extends Asset {
   serialize() {
     const data = super.serialize();
-    data.bitmapResolution = 1;
-    data.rotationCenterX = 0;
-    data.rotationCenterY = 0;
+    data.bitmapResolution = this.format==='png'? 2:1;
+    data.rotationCenterX = 480;
+    data.rotationCenterY = 360;
     return data;
   }
 }
@@ -101,12 +104,17 @@ class Sound extends Asset {
   }
 }
 
+/**
+* @param {string} name name of the asset
+* @param {string} filename name of the file (used to determine the type)
+* @param {Buffer} data contents of the file
+*/
 Asset.from = function(name, filename, data) {
   const fmt = path.extname(filename);
-  if (fmt === 'svg') return new Costume(name, filename, data);
-  if (fmt === 'png') return new Costume(name, filename, data);
-  if (fmt === 'wav') return new Sound(name, filename, data);
-  if (fmt === 'mp3') return new Sound(name, filename, data);
+  if (fmt === '.svg') return new Costume(name, filename, data);
+  if (fmt === '.png') return new Costume(name, filename, data);
+  if (fmt === '.wav') return new Sound(name, filename, data);
+  if (fmt === '.mp3') return new Sound(name, filename, data);
   throw new common.Error(`Unknown file type: ${fmt} in ${filename}`);
 }
 
@@ -124,6 +132,11 @@ class Target {
     this.isStage = isStage;
     this.symbols = [];
     this.branches = [];
+    this.assets = [];
+    this.asset(
+      path.resolve(__dirname, 'default.png'),
+      'default',
+    )
   }
 
   /**
@@ -132,6 +145,18 @@ class Target {
   */
   define(symbol) {
     this.symbols.push(symbol);
+  }
+
+  /**
+  * Import a asset file
+  * @param {string} path
+  * @param {string} as the name of the asset
+  */
+  asset(path, as) {
+    const data = fs.readFileSync(path);
+    const asset = Asset.from(as, path, data);
+    this.define(asset);
+    this.assets.push(asset);
   }
 
   getContext() {
@@ -154,17 +179,22 @@ class Target {
       branch.serialize(blocks);
     });
 
+    for (const blockID in blocks) {
+      const serializedBlock = blocks[blockID];
+      blocks[blockID] = compress.compressInputTree(serializedBlock, blocks);
+    }
+
     for (const symbol of this.symbols) {
       if (symbol instanceof Variable) variables[symbol.id] = symbol.serialize();
-      if (symbol instanceof List) lists[symbol.id] = symbol.serialize();
-      if (symbol instanceof Costume) costumes.push(symbol.serialize());
-      if (symbol instanceof Sound) costumes.push(symbol.serialize());
+      else if (symbol instanceof List) lists[symbol.id] = symbol.serialize();
+      else if (symbol instanceof Costume) costumes.push(symbol.serialize());
+      else if (symbol instanceof Sound) costumes.push(symbol.serialize());
       else throw new common.Error(`symbol: ${symbol} is not Variable List Costume or Sound`);
     }
 
     return {
       isStage: this.isStage,
-      name: this.isStage? 'stage':this.name,
+      name: this.isStage? 'Stage':this.name,
       variables,
       lists,
       broadcasts,
@@ -174,7 +204,7 @@ class Target {
       costumes,
       sounds,
       volume: 100,
-      layerOrder: 1,
+      layerOrder: this.isStage? 0:1,
       visable: true,
       x: 0,
       y: 0,
@@ -221,10 +251,10 @@ class Sb3 {
     this.meta = new Meta();
     this.extentions = ['pen', 'music'];
     this.targets = [];
-    this.sprite = new Sprite('Main');
     this.stage = new Stage('Stage');
-    this.targets.push(this.sprite);
     this.targets.push(this.stage);
+    this.sprite = new Sprite('Main');
+    this.targets.push(this.sprite);
     this.main = new Branch(this.sprite.blocks);
   }
 
@@ -236,6 +266,33 @@ class Sb3 {
       meta: this.meta.toJSON(),
     };
     return obj;
+  }
+
+  package() {
+    var zip = new JSZip();
+    this.targets.forEach((target) => {
+      target.assets.forEach((asset) => {
+        zip.file(asset.filename, asset.file);
+      });
+    })
+    zip.file('project.json', JSON.stringify(this.serialize()));
+    return zip;
+  }
+
+  /**
+  * Export a file
+  * @param {string} filepath
+  * @return {Promise}
+  */
+  export(filepath) {
+    const self = this;
+    return new Promise(function(resolve, reject) {
+      self.package().generateNodeStream({type:'nodebuffer',streamFiles:true})
+      .pipe(fs.createWriteStream(path.resolve(process.cwd(), filepath)))
+      .on('finish', function () {
+          resolve()
+      });
+    });
   }
 }
 
