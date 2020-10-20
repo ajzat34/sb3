@@ -45,6 +45,24 @@ class Branch extends Array {
   */
   define(symbol) {
     this.target.define(symbol);
+    return symbol
+  }
+
+  /**
+  * Create and define a Variable
+  * @param {string} name
+  * @return {Variable}
+  */
+  variable(name) {
+    return this.define(new this.Sb3.Variable(name));
+  }
+  /**
+  * Create and define a List
+  * @param {string} name
+  * @return {List}
+  */
+  list(name) {
+    return this.define(new this.Sb3.List(name));
   }
 
   /**

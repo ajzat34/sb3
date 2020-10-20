@@ -287,7 +287,7 @@ class Sb3 {
           level: 1,
         }
       })
-      .pipe(fs.createWriteStream(path.resolve(process.cwd(), filepath)))
+      .pipe(fs.createWriteStream(filepath))
       .on('finish', function () {
           resolve()
       });
