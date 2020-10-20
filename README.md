@@ -29,7 +29,7 @@ ctx.block('event.whenflagclicked');                             // [^When Green 
 ctx.block('motion.gotoxy', 100, ctx.block('motion.xposition')); // [goto x:(100) y:(x position)]
 
 // write the file
-project.export(path);
+project.export(process.cwd() + '/out.sb3');
 ```
 
 ## More Examples
