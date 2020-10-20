@@ -1,7 +1,8 @@
 const primitive = require('./primitive.js');
 const blocks = require('./blocks.js');
-const serializeBlock = require('./serialize_blocks.js')
-const Procedure = require('./procedure.js')
+const serializeBlock = require('./serialize_blocks.js');
+const Procedure = require('./procedure.js');
+const common = require('./common.js');
 
 var y = 0;
 
@@ -66,6 +67,30 @@ class Branch extends Array {
   }
 
   /**
+  * @param {object | string | number} arg
+  * @return {Block}
+  */
+  autoBlock(arg) {
+    if (arg instanceof this.Sb3.Block) return arg;
+    if (typeof arg === 'string'
+        || typeof arg === 'number'
+        || arg instanceof this.Sb3.Variable
+        || arg instanceof this.Sb3.List
+        || arg instanceof this.Sb3.Broadcast
+      )
+      {return this.primitive(arg);}
+    else if (arg instanceof Branch) {
+      if (arg.length) {
+        arg.substack();
+        return arg.first();
+      } else {
+        return null;
+      }
+    }
+    return arg;
+  }
+
+  /**
   * create a block
   * @param {string} name the opcode, or category.name of the block
   * @param {...*} args the arguments to the block
@@ -75,17 +100,7 @@ class Branch extends Array {
     const self = this;
     this.totalBlocks++;
     args.forEach((arg, i) => {
-      if (typeof arg === 'string'
-          || typeof arg === 'number'
-          || arg instanceof self.Sb3.Variable
-          || arg instanceof self.Sb3.List
-        )
-        {args[i] = self.primitive(arg);}
-      else if (arg instanceof Branch) {
-        if (!arg.length) throw new Error(`Cannot pass empty branch as argument, ${arg.totalBlocks} where defined, but none are chained`);
-        arg.substack();
-        args[i] = arg.first();
-      }
+      args[i] = self.autoBlock(arg);
     });
     const block = blocks.get(name).instance(...args);
     if (block.template.flags.includes('reporter')
@@ -122,7 +137,7 @@ class Branch extends Array {
   * @return {Procedure}
   */
   procedure(proccode, warp, callback) {
-    const proc = new Procedure(proccode, this.branch(), warp)
+    const proc = new Procedure(proccode, this.branch(), warp);
     if (callback) callback(proc.branch);
     return proc;
   }
@@ -133,6 +148,17 @@ class Branch extends Array {
   */
   callProcedure(procedure) {
     procedure.createCallBlock(this);
+  }
+
+  broadcast(block) {
+    if (typeof block === 'string'
+      || (block instanceof this.Sb3.Block && block.opcode === 'text'))
+    {
+      return this.broadcast(
+        this.block('operator.join', '', block)
+      );
+    }
+    return this.block('event.broadcast', this.autoBlock(block));
   }
 
   substack() {

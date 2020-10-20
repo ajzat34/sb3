@@ -62,6 +62,11 @@ class List extends Symbol {
     return [this.value, []];
   }
 }
+class Broadcast extends Symbol {
+  serialize() {
+    return this.value;
+  }
+}
 
 /**
 * A costume or Sound
@@ -141,7 +146,7 @@ class Target {
 
   /**
   * define a symbol (var, list, costume, or sound) on this sprite
-  * @param {Variable | List | Costume | Sound} symbol
+  * @param {Variable | List | Costume | Sound | Broadcast} symbol
   */
   define(symbol) {
     this.symbols.push(symbol);
@@ -181,7 +186,8 @@ class Target {
       else if (symbol instanceof List) lists[symbol.id] = symbol.serialize();
       else if (symbol instanceof Costume) costumes.push(symbol.serialize());
       else if (symbol instanceof Sound) costumes.push(symbol.serialize());
-      else throw new common.Error(`symbol: ${symbol} is not Variable List Costume or Sound`);
+      else if (symbol instanceof Broadcast) broadcasts[symbol.id] = symbol.serialize();
+      else throw new common.Error(`symbol: ${symbol} is not Variable List Costume Broadcast or Sound`);
     }
 
     return {
@@ -313,6 +319,7 @@ Sb3.Stage = Stage;
 Sb3.Sprite = Sprite;
 Sb3.Costume = Costume;
 Sb3.Sound = Sound;
+Sb3.Broadcast = Broadcast;
 Sb3.Variable = Variable;
 Sb3.List = List;
 Sb3.Block = Block;

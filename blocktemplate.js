@@ -26,12 +26,12 @@ function checkadd(target, source, list) {
 function shiftInto(target, values, list) {
   if (!Array.isArray(list)) throw new Error(`argument for list must be array`);
   for (key of list) {
-    const next = values.shift();
-    if (!next) {
+    if (!values.length) {
       const err = new Error(`ran out of values at ${key}`);
       err.key = key;
       throw err;
     }
+    const next = values.shift();
     target[key] = next;
   }
 }

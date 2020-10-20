@@ -101,6 +101,9 @@ function variablePrimitive(data) {
 function listPrimitive(data) {
   return primitiveBlockTemplates['data_listcontents'].instance(data);
 }
+function broadcastPrimitive(data) {
+  return primitiveBlockTemplates['event_broadcast_menu'].instance(data);
+}
 
 /**
 * automaticly create a primitive
@@ -113,6 +116,7 @@ function primitive(Sb3, data) {
   if (typeof data === 'number') return numberPrimitive(data);
   if (data instanceof Sb3.Variable) return variablePrimitive(data);
   if (data instanceof Sb3.List) return listPrimitive(data);
+  if (data instanceof Sb3.Broadcast) return broadcastPrimitive(data);
   throw new common.Error(`${data} is not string, number, Sb3.Variable, or Sb3.List`, 'NOTPRIM');
 }
 
