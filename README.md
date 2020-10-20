@@ -32,6 +32,12 @@ ctx.block('motion.gotoxy', 100, ctx.block('motion.xposition')); // [goto x:(100)
 project.export(path);
 ```
 
+## More Examples
+* [Basic Usage](example/basic.js)
+* [The If Block](example/if.js)
+* [Defining Procedures (functions)](example/procedures.js)
+* [Loading Assets](example/assets.js)
+
 ### Command line tool:
 Interactive block explorer
 ```bash
@@ -45,3 +51,13 @@ Dump the project.json from an sb3
 ```bash
 sb3 dumo file.sb3
 ```
+
+# Quirks
+* Names MUST be unique for:
+  * Variable
+  * List
+  * Costume
+  * Sound
+* Don't try to put non-reporter blocks in block inputs
+* Don't intermix procedures, variables, ect. between sprites
+* If you want a variable to be global, create it on the project.stage.blocks Branch
