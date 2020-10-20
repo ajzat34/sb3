@@ -52,7 +52,7 @@ Dump the project.json from an sb3
 sb3 dumo file.sb3
 ```
 
-# Quirks
+## Quirks
 * Names MUST be unique for:
   * Variable
   * List
@@ -61,3 +61,6 @@ sb3 dumo file.sb3
 * Don't try to put non-reporter blocks in block inputs
 * Don't intermix procedures, variables, ect. between sprites
 * If you want a variable to be global, create it on the project.stage.blocks Branch
+
+## Untested Features / Known Bugs
+* Sounds
