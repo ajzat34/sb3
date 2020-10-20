@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Create .sb3 files for Scratch 3",
   "main": "index.js",
+  "bin": "./cmd.js",
   "repository": "https://github.com/ajzat34/sb3.git",
   "author": "Andrew Johnson <ajzat25@gmail.com>",
   "license": "UNLICENSED",

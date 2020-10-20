@@ -247,7 +247,7 @@ class Sb3 {
     this.targets.push(this.stage);
     this.sprite = new Sprite('Main');
     this.targets.push(this.sprite);
-    this.main = new Branch(this.sprite.blocks);
+    this.main = this.sprite.blocks;
   }
 
   serialize() {

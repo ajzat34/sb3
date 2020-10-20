@@ -1,6 +1,6 @@
 const Sb3 = require('../sb3.js');
 const project = new Sb3();
-const ctx = project.sprite.blocks;
+const ctx = project.main;
 // create a variable
 const myVar = ctx.variable();
 ctx.block('event.whenflagclicked');                    // [^When Green Flag Clicked]
