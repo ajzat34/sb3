@@ -37,6 +37,7 @@ project.export(process.cwd() + '/out.sb3');
 * [The If Block](example/if.js)
 * [Defining Procedures (functions)](example/procedures.js)
 * [Loading Assets](example/assets.js)
+* [Broadcasts](example/broadcast.js)
 
 ### Command line tool:
 Interactive block explorer
