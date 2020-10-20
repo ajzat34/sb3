@@ -1,4 +1,4 @@
-const Sb3 = require('sb3');
+const Sb3 = require('../sb3.js');
 const project = new Sb3();
 const ctx = project.main;
 

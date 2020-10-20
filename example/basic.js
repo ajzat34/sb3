@@ -1,5 +1,5 @@
 // require
-const Sb3 = require('sb3');
+const Sb3 = require('../sb3.js');
 
 // create a project
 const project = new Sb3();
@@ -12,4 +12,4 @@ ctx.block('event.whenflagclicked');                             // [^When Green 
 ctx.block('motion.gotoxy', 100, ctx.block('motion.xposition')); // [goto x:(100) y:(x position)]
 
 // write the file
-project.export(path);
+project.export(__dirname + '/basic.sb3');
