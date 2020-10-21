@@ -1,4 +1,4 @@
-# Sb3
+# sb3
 Makes creating .sb3 files for Scratch 3 easy
 
 ## Install
@@ -7,7 +7,6 @@ With npm:
 npm install ajzat34/sb3
 ```
 With yarn:
-
 ```
 yarn add ajzat34/sb3
 ```
