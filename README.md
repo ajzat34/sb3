@@ -50,7 +50,7 @@ sb3 inspect file.sb3
 ```
 Dump the project.json from an sb3
 ```bash
-sb3 dumo file.sb3
+sb3 dump file.sb3
 ```
 
 ## Quirks
