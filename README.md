@@ -35,7 +35,7 @@ project.export(process.cwd() + '/out.sb3');
 * [Basic Usage](example/basic.js)
 * [The If Block](example/if.js)
 * [Defining Procedures (functions)](example/procedures.js)
-* [Loading Assets](example/assets.js)
+* [Loading Assets](example/asset.js)
 * [Broadcasts](example/broadcast.js)
 
 ### Command line tool:
