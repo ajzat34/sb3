@@ -20,7 +20,7 @@ const serializeFields = function (fields) {
     const data = fields[fieldName];
     if (data.opcode === 'data_variable') {
       obj[fieldName] = [data.fields.VARIABLE.value, data.fields.VARIABLE.id];
-    } else if (data.opcode === 'data_list') {
+    } else if (data.opcode === 'data_listcontents') {
       obj[fieldName] = [data.fields.LIST.value, data.fields.LIST.id];
     } else if (data.opcode === 'event_broadcast_menu') {
       obj[fieldName] = [data.fields.BROADCAST_OPTION.value, data.fields.BROADCAST_OPTION.id];
