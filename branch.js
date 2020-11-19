@@ -198,4 +198,6 @@ class Branch extends Array {
   }
 }
 
+Branch.Procedure = Procedure;
+
 module.exports = Branch;
