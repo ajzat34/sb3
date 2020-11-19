@@ -6,7 +6,6 @@ yargs
 .command(require('./blocktool.js'))
 .command(require('./dump.js'))
 .strict()
-.demandCommand()
 .help()
 .wrap(Math.min(100, process.stdout.columns || 100))
 .argv;

@@ -24,6 +24,10 @@ const serializeFields = function (fields) {
       obj[fieldName] = [data.fields.LIST.value, data.fields.LIST.id];
     } else if (data.opcode === 'event_broadcast_menu') {
       obj[fieldName] = [data.fields.BROADCAST_OPTION.value, data.fields.BROADCAST_OPTION.id];
+    } else if (data.opcode === 'text') {
+      obj[fieldName] = [data.fields.TEXT.value];
+    } else if (typeof data == 'string'){
+      obj[fieldName] = [data];
     } else {
       // obj[fieldName] = [data.id];
       throw new common.Error(`Cannot use block of type ${data.opcode} as field (look into this)`)
