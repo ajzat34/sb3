@@ -1,6 +1,6 @@
 {
   "name": "sb3",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Create .sb3 files for Scratch 3",
   "main": "index.js",
   "bin": "./cmd.js",
