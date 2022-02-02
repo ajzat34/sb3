@@ -299,6 +299,21 @@ class Sb3 {
       });
     });
   }
+
+  /**
+  * get a read stream
+  * @return {ReadStream}
+  */
+  getStream(filepath) {
+    return this.package().generateNodeStream({
+      type:'nodebuffer',
+      streamFiles: true,
+      compression: "DEFLATE",
+      compressionOptions: {
+        level: 1,
+      }
+    });
+  }
 }
 
 /**
