@@ -10,6 +10,7 @@
   "sensing_answer",
   "sensing_mousedown",
   "sensing_mousex",
+  "sensing_mousey",
   "sensing_timer",
   "sensing_loudness",
   "sensing_of",
